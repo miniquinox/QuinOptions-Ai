@@ -88,8 +88,8 @@ def update_firestore_with_new_data(date, new_options):
     print(f"Data for {date} updated in Firestore.")
 
 def fetch_and_calculate_option_price():
-    # Path to your local chromedriver
-    chromedriver_path = "./chromedriverGitHub"  # Explicitly set to chromedriverGitHub
+    # Explicitly set to the correct path for chromedriverGitHub
+    chromedriver_path = "/usr/local/bin/chromedriver"  # Adjust this path
     
     # Set up Selenium with the local chromedriver
     options = Options()
@@ -100,6 +100,7 @@ def fetch_and_calculate_option_price():
     service = Service(chromedriver_path)
     driver = webdriver.Chrome(service=service, options=options)
     
+    # The rest of your code
     driver.get('https://stockanalysis.com/stocks/screener/')
     wait = WebDriverWait(driver, 10)
     print("Page loaded")
