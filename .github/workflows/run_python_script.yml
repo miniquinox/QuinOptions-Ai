@@ -30,10 +30,11 @@ jobs:
           sudo apt-get install -y wget unzip
           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
+          sudo apt-get install -y xvfb # Install Xvfb for headless browser support
           LATEST_RELEASE=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE)
           wget https://chromedriver.storage.googleapis.com/${LATEST_RELEASE}/chromedriver_linux64.zip
           unzip chromedriver_linux64.zip -d /usr/local/bin/
-          chmod +x /usr/local/bin/chromedriver
+          sudo chmod +x /usr/local/bin/chromedriver
           rm chromedriver_linux64.zip
 
       - name: Run Python Script
@@ -43,4 +44,5 @@ jobs:
           ROBIN_USERNAME: ${{ secrets.ROBIN_USERNAME }}
           ROBIN_PASSWORD: ${{ secrets.ROBIN_PASSWORD }}
         run: |
-          python YahooOptions.py
+          # Run script with Xvfb to simulate a display environment for headless Chrome
+          xvfb-run -a python YahooOptions.py
