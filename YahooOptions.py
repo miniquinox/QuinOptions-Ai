@@ -146,7 +146,7 @@ def fetch_and_calculate_option_price():
 
     input_element = driver.find_element(By.CSS_SELECTOR, "input[placeholder='Value']")
     input_element.clear()
-    input_element.send_keys("10")
+    input_element.send_keys("8")
     print("Filters set")
     
     time.sleep(0.5)
