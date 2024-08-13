@@ -24,9 +24,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install yfinance selenium python-dotenv robin_stocks firebase-admin pyotp
 
-      - name: Use Local Chromedriver
+      - name: Debug Chromedriver
         run: |
-          sudo mv chromedriverGitHub /usr/local/bin/chromedriver
+          # Verify if chromedriver exists in the repository
+          if [ ! -f ./chromedriverGitHub ]; then
+            echo "ERROR: chromedriverGitHub not found!"
+            exit 1
+          fi
+
+          # Check file type to ensure it's a Linux executable
+          file ./chromedriverGitHub
+
+          # Ensure chromedriver has the correct permissions
+          chmod +x ./chromedriverGitHub
+          ls -l ./chromedriverGitHub
+
+          # Move it to /usr/local/bin
+          sudo mv ./chromedriverGitHub /usr/local/bin/chromedriver
           sudo chmod +x /usr/local/bin/chromedriver
 
       - name: Run Python Script
@@ -36,4 +50,5 @@ jobs:
           ROBIN_USERNAME: ${{ secrets.ROBIN_USERNAME }}
           ROBIN_PASSWORD: ${{ secrets.ROBIN_PASSWORD }}
         run: |
+          # Run script with Xvfb to simulate a display environment for headless Chrome
           xvfb-run -a python YahooOptions.py
