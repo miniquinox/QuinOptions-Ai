@@ -17,7 +17,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.8' # or the version you need
+          python-version: '3.8'
 
       - name: Install dependencies
         run: |
@@ -30,10 +30,13 @@ jobs:
           sudo apt-get install -y wget unzip
           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
-          sudo apt-get install -y xvfb # Install Xvfb for headless browser support
+          sudo apt-get install -y xvfb
+          
+          # Download and set up chromedriver
           LATEST_RELEASE=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE)
           wget https://chromedriver.storage.googleapis.com/${LATEST_RELEASE}/chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip -d /usr/local/bin/
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/chromedriver
           sudo chmod +x /usr/local/bin/chromedriver
           rm chromedriver_linux64.zip
 
