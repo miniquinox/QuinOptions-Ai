@@ -26,22 +26,17 @@ jobs:
 
       - name: Debug Chromedriver
         run: |
-          # Verify if chromedriver exists in the repository
-          if [ ! -f ./chromedriverGitHub ]; then
-            echo "ERROR: chromedriverGitHub not found!"
-            exit 1
-          fi
-
-          # Check file type to ensure it's a Linux executable
-          file ./chromedriverGitHub
-
-          # Ensure chromedriver has the correct permissions
+          # Ensure chromedriverGitHub is executable
           chmod +x ./chromedriverGitHub
           ls -l ./chromedriverGitHub
 
-          # Move it to /usr/local/bin
+          # Move it to /usr/local/bin and ensure it's the correct one
           sudo mv ./chromedriverGitHub /usr/local/bin/chromedriver
           sudo chmod +x /usr/local/bin/chromedriver
+
+          # Double-check the file type and permissions after moving
+          file /usr/local/bin/chromedriver
+          ls -l /usr/local/bin/chromedriver
 
       - name: Run Python Script
         env:
@@ -50,5 +45,4 @@ jobs:
           ROBIN_USERNAME: ${{ secrets.ROBIN_USERNAME }}
           ROBIN_PASSWORD: ${{ secrets.ROBIN_PASSWORD }}
         run: |
-          # Run script with Xvfb to simulate a display environment for headless Chrome
           xvfb-run -a python YahooOptions.py
