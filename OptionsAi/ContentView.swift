@@ -163,7 +163,7 @@ struct InstructionsView: View {
                     Section(header: Text("🕰 Training Data")
                                 .font(.headline)
                                 .foregroundColor(.blue)) {
-                        VStack(alignment: .leading, spacing: 5) {
+                        VStack(alignment: .leading) {
                             Text("• Our AI model trains on historical data from 1920 all the way up to the very morning it is running on.")
                             Text("• This extensive data set ensures accuracy and reliability.")
                         }
@@ -178,7 +178,7 @@ struct InstructionsView: View {
                     Section(header: Text("⏰ Morning Update at 6:23 AM PST")
                                 .font(.headline)
                                 .foregroundColor(.blue)) {
-                        VStack(alignment: .leading, spacing: 5) {
+                        VStack(alignment: .leading) {
                             Text("• Every weekday (Mon-Fri) at exactly 6:23 AM PST, the system processes the latest options data—7 minutes before the Options market opens in the USA.")
                             Text("• You have 7 minutes to review the picks and take action.")
                         }
@@ -193,7 +193,7 @@ struct InstructionsView: View {
                     Section(header: Text("📲 Your Action Window")
                                 .font(.headline)
                                 .foregroundColor(.blue)) {
-                        VStack(alignment: .leading, spacing: 5) {
+                        VStack(alignment: .leading) {
                             Text("• Use these 7 minutes to:")
                             Text("   • Add the options picks you are interested in to your Robinhood watchlist.")
                             Text("   • Place an offer to buy a call.")
@@ -209,7 +209,7 @@ struct InstructionsView: View {
                     Section(header: Text("🔄 Ongoing Updates")
                                 .font(.headline)
                                 .foregroundColor(.blue)) {
-                        VStack(alignment: .leading, spacing: 5) {
+                        VStack(alignment: .leading) {
                             Text("• The app captures a fresh set of options every weekday morning at 6:23 AM PST.")
                             Text("• After the initial update, the app refreshes the percentage for the following 3 hours and 30 minutes.")
                             Text("• This refresh calculates the open price of the underlying Call and the maximum executed sale that morning.")
@@ -225,7 +225,7 @@ struct InstructionsView: View {
                     Section(header: Text("💡 Stay Ahead")
                                 .font(.headline)
                                 .foregroundColor(.blue)) {
-                        VStack(alignment: .leading, spacing: 5) {
+                        VStack(alignment: .leading) {
                             Text("• With QuinOptionsAi, you're always 7 minutes ahead of the market, equipped with data-driven insights to make informed decisions.")
                         }
                         .padding()
@@ -239,7 +239,7 @@ struct InstructionsView: View {
                     Section(header: Text("📝 Disclosure")
                                 .font(.headline)
                                 .foregroundColor(.blue)) {
-                        VStack(alignment: .leading, spacing: 5) {
+                        VStack(alignment: .leading) {
                             Text("• Remember, all investments carry risks. The data provided by QuinOptionsAi is for informational purposes only. Always do your own research before making any financial decisions.")
                         }
                         .padding()
