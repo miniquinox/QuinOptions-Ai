@@ -12,10 +12,6 @@ struct Option: Identifiable, Codable {
     let id: String
     let percentage: Double
 
-    var symbol: String {
-        return percentage > 30 ? "arrow.up.right" : "arrow.down.right"
-    }
-
     var color: Color {
         return percentage > 30 ? .green : .red
     }
@@ -25,7 +21,6 @@ struct Option: Identifiable, Codable {
         case percentage
     }
 }
-
 
 struct ContentView: View {
     @State private var optionsData: [OptionsData] = []
@@ -46,7 +41,10 @@ struct ContentView: View {
                             Text("No Option Picks Today")
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                         } else {
-                            ForEach(dailyOptions.options) { option in
+                            // Sort options by percentage in descending order
+                            let sortedOptions = dailyOptions.options.sorted { $0.percentage > $1.percentage }
+                            
+                            ForEach(sortedOptions) { option in
                                 HStack {
                                     Text(option.id)
                                         .lineLimit(1)
@@ -124,12 +122,6 @@ struct ContentView: View {
                     }
                 }
             }
-    }
-
-
-
-    private func color(for percentage: Double) -> Color {
-        return percentage > 30 ? Color(red: 25/255, green: 194/255, blue: 6/255) : Color(red: 251/255, green: 55/255, blue: 5/255)
     }
 
     private func background(for percentage: Double) -> Color {

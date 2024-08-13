@@ -17,7 +17,7 @@ struct Option: Identifiable, Codable {
         return percentage > 40 ? "arrow.up.right" : "arrow.down.right"
     }
     var color: Color {
-        return percentage > 40 ? Color(red: 25/255, green: 194/255, blue: 6/255) : Color(red: 251/255, green: 55/255, blue: 5/255)
+        return percentage < 30 ? Color(red: 251/255, green: 55/255, blue: 5/255) : Color(red: 25/255, green: 194/255, blue: 6/255)
     }
 }
 
@@ -68,52 +68,58 @@ struct SimpleEntry: TimelineEntry {
 struct OptionsWidgetEntryView: View {
     var entry: SimpleEntry
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.widgetFamily) var widgetFamily
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            if let lastOption = entry.optionsData.last {
+            if let latestOption = entry.optionsData.first {
                 HStack {
                     Text("OptionsAi by Quino")
                         .font(.system(size: 20))
                         .fontWeight(.bold)
                         .foregroundColor(colorScheme == .dark ? .white : .black)
-                    Text("- \(lastOption.date)")
+                    Text("- \(latestOption.date)")
                         .font(.system(size: 16))
                         .fontWeight(.bold)
                         .foregroundColor(.gray)
                 }
                 .padding(.vertical, 2)
-                .padding(.top) // Add padding to the top of the HStack
+                .padding(.top)
 
-                if lastOption.options.isEmpty {
+                if latestOption.options.isEmpty {
                     HStack {
                         Text("No Option Picks Today")
                             .foregroundColor(colorScheme == .dark ? .white : .black)
-                        Spacer() // This pushes the above views to the left
+                        Spacer()
                     }
                     .padding(.horizontal, 5)
                     .padding(.vertical, 4)
-                    Spacer() // This pushes the above views to the top
+                    Spacer()
 
                 } else {
+                    // Sort options by percentage in descending order
+                    let sortedOptions = latestOption.options.sorted { $0.percentage > $1.percentage }
+                    // Select the top 3 for medium and top 8 for large widgets
+                    let displayedOptions = Array(sortedOptions.prefix(widgetFamily == .systemLarge ? 8 : 3))
+
                     VStack(alignment: .leading, spacing: 0) {
-                        ForEach(lastOption.options.indices, id: \.self) { optionIndex in
+                        ForEach(displayedOptions.indices, id: \.self) { optionIndex in
                             HStack {
-                                Text(lastOption.options[optionIndex].id)
+                                Text(displayedOptions[optionIndex].id)
                                     .font(.system(size: 16))
                                     .lineLimit(1)
                                 Spacer()
-                                Text("\(lastOption.options[optionIndex].percentage, specifier: "%.2f")%")
+                                Text("\(displayedOptions[optionIndex].percentage, specifier: "%.2f")%")
                                     .font(.system(size: 16))
                                     .foregroundColor(.white)
                                     .padding(EdgeInsets(top: 2, leading: 8, bottom: 2, trailing: 8))
-                                    .background(lastOption.options[optionIndex].percentage > 40 ? Color(red: 25/255, green: 194/255, blue: 6/255) : Color(red: 251/255, green: 55/255, blue: 5/255))
+                                    .background(displayedOptions[optionIndex].color)
                                     .cornerRadius(5)
                             }
                             .padding(.horizontal, 5)
                             .padding(.vertical, 4)
 
-                            if optionIndex < lastOption.options.count - 1 {
+                            if optionIndex < displayedOptions.count - 1 {
                                 Divider()
                                     .background(colorScheme == .dark ? .white : .gray)
                                     .padding(.horizontal, 5)
@@ -121,27 +127,27 @@ struct OptionsWidgetEntryView: View {
                             }
                         }
                     }
-                    Spacer() // This pushes the above views to the top
+                    Spacer()
                 }
             }
         }
         .widgetBackground(colorScheme == .dark ? Color.black : Color.white)
         .cornerRadius(10)
         .edgesIgnoringSafeArea(.all)
-        .padding(.horizontal) // Add horizontal padding
+        .padding(.horizontal)
     }
 }
 
 // MARK: - Provider
 struct Provider: TimelineProvider {
-    
+
     // Ensure Firebase is configured only once
     init() {
         if FirebaseApp.app() == nil {
             FirebaseApp.configure()
         }
     }
-    
+
     func placeholder(in context: Context) -> SimpleEntry {
         SimpleEntry(date: Date(), optionsData: [])
     }
@@ -164,14 +170,14 @@ struct Provider: TimelineProvider {
             let currentDate = Date()
             let refreshDate = Calendar.current.date(byAdding: .minute, value: 15, to: currentDate)!
             let entries: [SimpleEntry]
-            
+
             switch result {
             case .success(let optionsData):
                 entries = [SimpleEntry(date: currentDate, optionsData: optionsData)]
             case .failure(_):
                 entries = [SimpleEntry(date: currentDate, optionsData: [])]
             }
-            
+
             let timeline = Timeline(entries: entries, policy: .after(refreshDate))
             completion(timeline)
         }
@@ -187,7 +193,7 @@ struct OptionsWidget: Widget {
         .configurationDisplayName("Options Widget")
         .description("This is an example widget.")
         .supportedFamilies([.systemMedium, .systemLarge])
-        .contentMarginsDisabled() // Disable content margins for iOS 17
+        .contentMarginsDisabled()
     }
 }
 
@@ -196,6 +202,6 @@ struct OptionsWidget_Previews: PreviewProvider {
     static var previews: some View {
         OptionsWidgetEntryView(entry: SimpleEntry(date: Date(), optionsData: []))
             .previewContext(WidgetPreviewContext(family: .systemSmall))
-            .environment(\.colorScheme, .dark) // Preview in dark mode
+            .environment(\.colorScheme, .dark)
     }
 }
