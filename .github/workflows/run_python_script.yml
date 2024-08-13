@@ -41,4 +41,4 @@ jobs:
           ROBIN_USERNAME: ${{ secrets.ROBIN_USERNAME }}
           ROBIN_PASSWORD: ${{ secrets.ROBIN_PASSWORD }}
         run: |
-          python your_script_name.py
+          python YahooOptions.py
