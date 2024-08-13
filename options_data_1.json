@@ -1,0 +1,63 @@
+[
+    {
+        "date": "2024-03-04",
+        "options": [
+            {
+                "id": "SMCI $1040.0 Call 2024-03-08",
+                "percentage": 96.42
+            },
+            {
+                "id": "MSTR $1200.0 Call 2024-03-08",
+                "percentage": 82.16
+            }
+        ]
+    },
+    {
+        "date": "2024-03-05",
+        "options": [
+            {
+                "id": "TGT $165.0 Call 2024-03-08",
+                "percentage": 43.06
+            }
+        ]
+    },
+    {
+        "date": "2024-03-06",
+        "options": [
+            {
+                "id": "JD $25.0 Call 2024-03-08",
+                "percentage": 53.94
+            },
+            {
+                "id": "CRWD $362.5 Call 2024-03-08",
+                "percentage": 114.58
+            }
+        ]
+    },
+    {
+        "date": "2024-03-07",
+        "options": [
+            {
+                "id": "AEO $26.5 Call 2024-03-08",
+                "percentage": 81.40
+            },
+            {
+                "id": "CC $26.0 Call 2024-03-08",
+                "percentage": 6900.0
+            }
+        ]
+    },
+    {
+        "date": "2024-03-08",
+        "options": [
+            {
+                "id": "IOT $38.5 Call 2024-03-08",
+                "percentage": 50.0
+            }
+        ]
+    },
+    {
+        "date": "2024-03-11",
+        "options": []
+    }
+]
