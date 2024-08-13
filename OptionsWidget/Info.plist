@@ -5,7 +5,12 @@
     <key>ITSAppUsesNonExemptEncryption</key>
     <false/>
     <key>LSMinimumSystemVersion</key>
-    <string>14.6</string>
+    <dict>
+        <key>macos</key>
+        <string>15.0</string>
+        <key>ios</key>
+        <string>14.6</string>
+    </dict>
     <key>CFBundleIdentifier</key>
     <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
     <key>CFBundleName</key>
