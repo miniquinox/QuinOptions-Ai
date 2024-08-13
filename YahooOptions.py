@@ -89,7 +89,7 @@ def update_firestore_with_new_data(date, new_options):
 
 def fetch_and_calculate_option_price():
     # Path to your local chromedriver
-    chromedriver_path = "./chromedriver"
+    chromedriver_path = "./chromedriverGitHub"  # Explicitly set to chromedriverGitHub
     
     # Set up Selenium with the local chromedriver
     options = Options()
