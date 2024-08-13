@@ -1,0 +1,73 @@
+# macOS
+.DS_Store
+
+# Xcode
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.xcscmblueprint
+*.xcuserstate
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# CocoaPods
+Pods/
+Podfile.lock
+*.xcworkspace
+
+# Carthage
+Carthage/Build/
+
+# Accio dependency manager
+Dependencies/
+.accio/
+
+# fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+fastlane/test_output/**/*.log
+
+# Code signing
+*.certSigningRequest
+*.p12
+
+# Provisioning profiles
+*.mobileprovision
+*.provisionprofile
+
+# Certificates
+*.cer
+*.crt
+*.pem
+
+# Generated files
+*.moved-aside
+DerivedData/
+.idea/
+*.hmap
+
+# Google related files
+GoogleService-Info.plist
+quinoptions-ai-firebase-adminsdk-38b0c-d63ef1e6ef.json
+
+# Environment variables
+.env
+
+# Python-related files
+__pycache__/
+*.pyc
+
+# Your Python script
+encode_firebaseKey.py
