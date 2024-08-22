@@ -336,7 +336,7 @@ def check_and_update_high_price():
         while True:
             # Check if 3 hours and 30 minutes have passed
             elapsed_time = datetime.now() - start_time
-            if elapsed_time > timedelta(hours=3, minutes=30):
+            if elapsed_time > timedelta(minutes=30):
                 break
 
             if not last_doc['options']:
