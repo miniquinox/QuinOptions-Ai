@@ -180,8 +180,11 @@ def fetch_and_calculate_option_price():
     if not all([mfa_key, username, password]):
         raise EnvironmentError("One or more environment variables are missing.")
 
+    # Generate the MFA code using pyotp
     totp = pyotp.TOTP(os.getenv('ROBIN_MFA')).now()
-    login = r.login(os.getenv('ROBIN_USERNAME'), os.getenv('ROBIN_PASSWORD'), store_session=False, mfa_code=totp)
+    
+    # Login to Robinhood using the MFA code
+    login = r.login(username, password, store_session=False, mfa_code=totp)
    
     print("Logged in")
 
@@ -258,20 +261,6 @@ def fetch_and_calculate_option_price():
 ############## ROBINHOOD CODE #####################
 ###################################################
 
-# Load environment variables
-mfa_key = os.getenv('ROBIN_MFA')
-username = os.getenv('ROBIN_USERNAME')
-password = os.getenv('ROBIN_PASSWORD')
-if not all([mfa_key, username, password]):
-    raise EnvironmentError("One or more environment variables are missing.")
-
-# Login to Robinhood
-totp = pyotp.TOTP(os.environ['ROBIN_MFA']).now()
-login = r.login(os.environ['ROBIN_USERNAME'],
-                os.environ['ROBIN_PASSWORD'], store_session=False, mfa_code=totp)
-
-print("Logged in to Robinhood")
-
 def get_high_option_price(symbol, exp_date, strike):
     options = r.find_options_by_expiration_and_strike(symbol, exp_date, strike, optionType='call')
 
@@ -288,35 +277,6 @@ def get_high_option_price(symbol, exp_date, strike):
     high_price = market_data[0].get('high_price')
 
     return float(high_price.replace(',', '')) if high_price else None
-
-def update_firestore_with_new_data(date, new_options):
-    doc_ref = db.collection('options_data').document(date)
-    
-    # Check if the document already exists
-    existing_doc = doc_ref.get()
-    if existing_doc.exists:
-        existing_data = existing_doc.to_dict()
-        existing_options = existing_data.get('options', [])
-    else:
-        existing_options = []
-
-    # Merge new options with existing options
-    for new_option in new_options:
-        updated = False
-        for existing_option in existing_options:
-            if existing_option['id'] == new_option['id']:
-                existing_option['percentage'] = new_option['percentage']
-                updated = True
-                break
-        if not updated:
-            existing_options.append(new_option)
-
-    # Update Firestore with merged data
-    doc_ref.set({
-        'date': date,
-        'options': existing_options
-    })
-    print(f"Data for {date} updated in Firestore.")
 
 def check_and_update_high_price():
     # Reference to Firestore collection and document
