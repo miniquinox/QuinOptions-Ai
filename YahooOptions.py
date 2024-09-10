@@ -76,6 +76,8 @@ def update_firestore_with_new_data(date, new_options):
         for existing_option in existing_options:
             if existing_option['id'] == new_option['id']:
                 existing_option['percentage'] = new_option['percentage']
+                existing_option['high_price'] = new_option['high_price']
+                existing_option['open_price'] = new_option['open_price']
                 updated = True
                 break
         if not updated:
@@ -334,6 +336,8 @@ def check_and_update_high_price():
                         percentage = round((high_price - open_price) / open_price * 100, 2)
                         if percentage > option['percentage']:
                             option['percentage'] = percentage
+                            option['high_price'] = high_price
+                            option['open_price'] = open_price
                             print(f"Updating high price for {symbol} {strike} {exp_date} to {high_price} with a percentage of {percentage}%")
                             new_options.append(option)
                         else:
