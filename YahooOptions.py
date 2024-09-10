@@ -76,13 +76,9 @@ def update_firestore_with_new_data(date, new_options):
         for existing_option in existing_options:
             if existing_option['id'] == new_option['id']:
                 existing_option['percentage'] = new_option['percentage']
-                # Update with open_price and high_price
-                existing_option['open_price'] = new_option.get('open_price', "N/A")
-                existing_option['high_price'] = new_option.get('high_price', "N/A")
                 updated = True
                 break
         if not updated:
-            # Add open_price and high_price for new options
             existing_options.append(new_option)
 
     doc_ref.set({
@@ -227,8 +223,6 @@ def fetch_and_calculate_option_price():
                 current_stock_price = r.get_latest_price(symbol)[0]
                 options = r.find_options_by_expiration_and_strike(symbol, target_expiration, target_strike, optionType='call')
                 option_market_close = options[0]["previous_close_price"] 
-                open_price = float(options[0]['open_price'].replace(',', ''))
-                high_price = get_high_option_price(symbol, target_expiration, target_strike)
 
             except:
                 print(f"Error fetching data for {symbol}")
@@ -241,9 +235,7 @@ def fetch_and_calculate_option_price():
             option_id = f"{symbol} ${target_strike} Call {target_expiration}"
             new_data["options"].append({
                 "id": option_id,
-                "percentage": 0,
-                "open_price": open_price,
-                "high_price": high_price
+                "percentage": 0
             })
 
     else:
@@ -342,10 +334,12 @@ def check_and_update_high_price():
                         percentage = round((high_price - open_price) / open_price * 100, 2)
                         if percentage > option['percentage']:
                             option['percentage'] = percentage
-                            option['open_price'] = open_price
-                            option['high_price'] = high_price
                             print(f"Updating high price for {symbol} {strike} {exp_date} to {high_price} with a percentage of {percentage}%")
                             new_options.append(option)
+                        else:
+                            print(f"No update for {symbol} {strike} {exp_date} as the high price is {high_price} and the open price is {open_price}")
+                    else:
+                        print(f"No update for {symbol} {strike} {exp_date} as the high price is {high_price} and the open price is {open_price}")
 
             if new_options:
                 update_firestore_with_new_data(date, new_options)
