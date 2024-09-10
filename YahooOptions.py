@@ -76,11 +76,13 @@ def update_firestore_with_new_data(date, new_options):
         for existing_option in existing_options:
             if existing_option['id'] == new_option['id']:
                 existing_option['percentage'] = new_option['percentage']
+                # Update with open_price and high_price
                 existing_option['open_price'] = new_option.get('open_price', "N/A")
                 existing_option['high_price'] = new_option.get('high_price', "N/A")
                 updated = True
                 break
         if not updated:
+            # Add open_price and high_price for new options
             existing_options.append(new_option)
 
     doc_ref.set({
@@ -300,7 +302,7 @@ def check_and_update_high_price():
         start_time = datetime.now()
 
         while True:
-            # Check if 30 minutes have passed
+            # Check if 3 hours and 30 minutes have passed
             elapsed_time = datetime.now() - start_time
             if elapsed_time > timedelta(minutes=30):
                 break
@@ -327,10 +329,16 @@ def check_and_update_high_price():
                         print(f"Could not fetch historical data for {symbol} {strike} {exp_date}")
                         continue
 
+                    # Convert open price to float
                     open_price = float(raw_open_price_data[0]["open_price"].replace(',', ''))
-                    high_price = get_high_option_price(symbol, exp_date, strike)
 
-                    if high_price and high_price > open_price:
+                    # Get high price
+                    high_price = get_high_option_price(symbol, exp_date, strike)
+                    if high_price is None:
+                        print(f"No registered trades for {symbol} {strike} {exp_date}")
+                        continue
+
+                    if high_price > open_price:
                         percentage = round((high_price - open_price) / open_price * 100, 2)
                         if percentage > option['percentage']:
                             option['percentage'] = percentage
@@ -342,7 +350,8 @@ def check_and_update_high_price():
             if new_options:
                 update_firestore_with_new_data(date, new_options)
 
-            time.sleep(10)  # Wait for a minute before the next check
+            # Wait for a minute before the next check
+            time.sleep(10)
             print("\n\n\n\n")
 
 if __name__ == "__main__":
