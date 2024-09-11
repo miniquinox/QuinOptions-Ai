@@ -238,6 +238,10 @@ def fetch_and_calculate_option_price():
 
             # get time now
             now = datetime.now()
+            time_difference = timedelta(hours=-7)
+            
+            # Adjust the current time by the time difference
+            now = now + time_difference
             new_data["options"].append({
                 "id": option_id,
                 "percentage": 0,
