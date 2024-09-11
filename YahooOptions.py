@@ -20,6 +20,8 @@ import base64
 # Load environment variables
 load_dotenv()
 
+print("Starting at time: ", datetime.now())
+
 # Firebase setup
 firebase_key = os.getenv('FIREBASE_SERVICE_ACCOUNT_KEY')
 if not firebase_key:
