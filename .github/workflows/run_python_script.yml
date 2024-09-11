@@ -1,9 +1,9 @@
 name: Run Python Script
 
 on:        
-  # Runs at 6:20 AM PST, Monday through Friday
+  # Runs at 6:10 AM PST, Monday through Friday
   schedule:
-    - cron: '15 13 * * 1-5'
+    - cron: '10 13 * * 1-5'
   workflow_dispatch:
 
 jobs:
