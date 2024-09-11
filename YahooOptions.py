@@ -235,9 +235,13 @@ def fetch_and_calculate_option_price():
             print(f'Option price at market close: {option_market_close} for {symbol}')
 
             option_id = f"{symbol} ${target_strike} Call {target_expiration}"
+
+            # get time now
+            now = datetime.now()
             new_data["options"].append({
                 "id": option_id,
-                "percentage": 0
+                "percentage": 0,
+                "time": now.strftime("%Y-%m-%d %H:%M:%S"),
             })
 
     else:
