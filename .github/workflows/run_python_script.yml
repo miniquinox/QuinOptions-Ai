@@ -3,7 +3,7 @@ name: Run Python Script
 on:        
   # Runs at 6:10 AM PST, Monday through Friday
   schedule:
-    - cron: '10 13 * * 1-5'
+    - cron: '00 13 * * 1-5'
   workflow_dispatch:
 
 jobs:
