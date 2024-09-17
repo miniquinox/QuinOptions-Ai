@@ -1,20 +1,20 @@
 import json
-import yfinance as yf
+import yfinance as yf # type: ignore
 import re
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from selenium import webdriver # type: ignore
+from selenium.webdriver.chrome.service import Service # type: ignore
+from selenium.webdriver.chrome.options import Options # type: ignore
+from selenium.webdriver.common.by import By # type: ignore
+from selenium.webdriver.support.ui import WebDriverWait # type: ignore
+from selenium.webdriver.support import expected_conditions as EC # type: ignore
 import time
 import os
-import robin_stocks.robinhood as r
-from dotenv import load_dotenv
-import pyotp
-import firebase_admin
-from firebase_admin import credentials, firestore
-from datetime import datetime, timedelta
+import robin_stocks.robinhood as r # type: ignore
+from dotenv import load_dotenv # type: ignore
+import pyotp # type: ignore
+import firebase_admin # type: ignore
+from firebase_admin import credentials, firestore # type: ignore
+from datetime import datetime, timedelta, timezone
 import base64
 
 # Load environment variables
@@ -303,12 +303,20 @@ def check_and_update_high_price():
         date = last_doc['date']
         new_options = []
 
+        # Wait until 6:30 AM PST
+        while True:
+            now = datetime.now(timezone.utc) - timedelta(hours=7)  # Convert UTC to PST
+            if now.hour == 6 and now.minute >= 31:
+                print("Not 6:30am yet. Waiting...")
+                break
+            time.sleep(30)  # Sleep for 30sec before checking again
+
         start_time = datetime.now()
 
         while True:
             # Check if 3 hours and 30 minutes have passed
             elapsed_time = datetime.now() - start_time
-            if elapsed_time > timedelta(minutes=30):
+            if elapsed_time > timedelta(hours=1, minutes=30):
                 break
 
             if not last_doc['options']:
