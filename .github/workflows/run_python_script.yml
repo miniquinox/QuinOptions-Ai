@@ -24,22 +24,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install yfinance selenium python-dotenv robin_stocks firebase-admin pyotp
 
-      - name: Cache ChromeDriver
-        id: chrome-cache
-        uses: actions/cache@v3
-        with:
-          path: /usr/local/bin/chromedriver
-          key: chromedriver-${{ runner.os }}-${{ hashFiles('YahooOptions.py') }}
-
-      - name: Set up ChromeDriver
-        if: steps.chrome-cache.outputs.cache-hit != 'true'
+      - name: Use local ChromeDriver
         run: |
-          CHROME_VERSION=$(google-chrome --version | grep -oP '\d{2,3}')
-          CHROMEDRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION)
-          wget -N https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip -P /tmp/
-          unzip /tmp/chromedriver_linux64.zip -d /tmp/
-          sudo mv /tmp/chromedriver /usr/local/bin/chromedriver
+          sudo mv ./chromedriver /usr/local/bin/chromedriver
           sudo chmod +x /usr/local/bin/chromedriver
+          # Confirm ChromeDriver setup
+          /usr/local/bin/chromedriver --version
 
       - name: Run Python Script
         env:
