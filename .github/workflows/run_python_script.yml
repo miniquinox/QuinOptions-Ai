@@ -24,19 +24,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install yfinance selenium python-dotenv robin_stocks firebase-admin pyotp
 
-      - name: Debug Chromedriver
+      - name: Set up ChromeDriver
         run: |
-          # Ensure chromedriverGitHub is executable
-          chmod +x ./chromedriverGitHub
-          ls -l ./chromedriverGitHub
-
-          # Move it to /usr/local/bin and ensure it's the correct one
-          sudo mv ./chromedriverGitHub /usr/local/bin/chromedriver
+          CHROME_VERSION=$(google-chrome --version | grep -oP '\d{2,3}')
+          CHROMEDRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION)
+          wget -N https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip -P /tmp/
+          unzip /tmp/chromedriver_linux64.zip -d /tmp/
+          sudo mv /tmp/chromedriver /usr/local/bin/chromedriver
           sudo chmod +x /usr/local/bin/chromedriver
-
-          # Double-check the file type and permissions after moving
-          file /usr/local/bin/chromedriver
-          ls -l /usr/local/bin/chromedriver
 
       - name: Run Python Script
         env:
