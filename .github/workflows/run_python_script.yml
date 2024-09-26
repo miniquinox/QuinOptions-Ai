@@ -24,7 +24,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install yfinance selenium python-dotenv robin_stocks firebase-admin pyotp
 
-      - name: Use local ChromeDriver
+      - name: Use local ChromeDriver from main folder
         run: |
           sudo mv ./chromedriver /usr/local/bin/chromedriver
           sudo chmod +x /usr/local/bin/chromedriver
