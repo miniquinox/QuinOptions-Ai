@@ -5,12 +5,14 @@ import SwiftUI
 struct OptionsData: Identifiable, Codable {
     let id = UUID()
     let date: String
-    let options: [Option]
+    var options: [Option]
 }
 
 struct Option: Identifiable, Codable {
     let id: String
     let percentage: Double
+    let openPrice: Double?
+    let highPrice: Double?
 
     var color: Color {
         return percentage > 30 ? .green : .red
@@ -19,6 +21,8 @@ struct Option: Identifiable, Codable {
     enum CodingKeys: String, CodingKey {
         case id
         case percentage
+        case openPrice = "open_price"
+        case highPrice = "high_price"
     }
 }
 
@@ -26,37 +30,72 @@ struct ContentView: View {
     @State private var optionsData: [OptionsData] = []
     @Environment(\.colorScheme) var colorScheme
     @State private var showingInstructions = false
+    @State private var expandedDates: Set<String> = [] // Track expanded cards by date
 
     var body: some View {
         NavigationView {
             List {
                 ForEach(optionsData, id: \.id) { dailyOptions in
                     VStack(alignment: .leading) {
-                        Text("Options for \(dailyOptions.date)")
-                            .font(.system(size: 20))
-                            .fontWeight(.bold)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                            .padding(.bottom, 5)
+                        HStack {
+                            Text("Options for \(dailyOptions.date)")
+                                .font(.system(size: 20))
+                                .fontWeight(.bold)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                            Spacer()
+                            Button(action: {
+                                toggleExpand(dailyOptions.id.uuidString)
+                            }) {
+                                Image(systemName: expandedDates.contains(dailyOptions.id.uuidString) ? "chevron.up" : "chevron.down")
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        .padding(.bottom, 5)
 
                         if dailyOptions.options.isEmpty {
                             Text("No Option Picks Today")
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                         } else {
-                            // Sort options by percentage in descending order
                             let sortedOptions = dailyOptions.options.sorted { $0.percentage > $1.percentage }
 
                             ForEach(sortedOptions) { option in
-                                HStack {
-                                    Text(option.id)
-                                        .lineLimit(1)
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                                    Spacer()
-                                    Text("\(option.percentage, specifier: "%.2f")%")
-                                        .foregroundColor(.white)
-                                        .padding(EdgeInsets(top: 2, leading: 8, bottom: 2, trailing: 8))
-                                        .background(background(for: option.percentage))
-                                        .cornerRadius(5)
+                                VStack(alignment: .leading) {
+                                    HStack {
+                                        Text(option.id)
+                                            .lineLimit(1)
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        Spacer()
+                                        Text("\(option.percentage, specifier: "%.2f")%")
+                                            .foregroundColor(.white)
+                                            .padding(EdgeInsets(top: 2, leading: 8, bottom: 2, trailing: 8))
+                                            .background(background(for: option.percentage))
+                                            .cornerRadius(5)
+                                    }
+                                    .padding(.vertical, 5)
+
+                                    // Display additional information for all options when the date is expanded
+                                    if expandedDates.contains(dailyOptions.id.uuidString) {
+                                        VStack(alignment: .leading, spacing: 5) {
+                                            if let openPrice = option.openPrice {
+                                                Text("Open Price: $\(openPrice, specifier: "%.2f")")
+                                                    .foregroundColor(.gray)
+                                            } else {
+                                                Text("Open Price: Not Available")
+                                                    .foregroundColor(.red)
+                                            }
+
+                                            if let highPrice = option.highPrice {
+                                                Text("High Price: $\(highPrice, specifier: "%.2f")")
+                                                    .foregroundColor(.gray)
+                                            } else {
+                                                Text("High Price: Not Available")
+                                                    .foregroundColor(.red)
+                                            }
+                                        }
+                                        .padding(.leading, 30) // Align with where the rows start
+                                    }
                                 }
+                                .padding(.vertical, 5)
                             }
                         }
                     }
@@ -95,6 +134,14 @@ struct ContentView: View {
             .sheet(isPresented: $showingInstructions) {
                 InstructionsView()
             }
+        }
+    }
+
+    private func toggleExpand(_ dateId: String) {
+        if expandedDates.contains(dateId) {
+            expandedDates.remove(dateId)
+        } else {
+            expandedDates.insert(dateId)
         }
     }
 
@@ -161,8 +208,9 @@ struct InstructionsView: View {
                         .padding(.bottom, 10)
 
                     Section(header: Text("🕰 Training Data")
-                                .font(.headline)
-                                .foregroundColor(.blue)) {
+                        .font(.headline)
+                        .foregroundColor(.blue))
+                    {
                         VStack(alignment: .leading) {
                             Text("• Our AI model trains on historical data from 1920 all the way up to the very morning it is running on.")
                             Text("• This extensive data set ensures accuracy and reliability.")
@@ -176,8 +224,9 @@ struct InstructionsView: View {
                     Divider()
 
                     Section(header: Text("⏰ Morning Update at 6:23 AM PST")
-                                .font(.headline)
-                                .foregroundColor(.blue)) {
+                        .font(.headline)
+                        .foregroundColor(.blue))
+                    {
                         VStack(alignment: .leading) {
                             Text("• Every weekday (Mon-Fri) at exactly 6:23 AM PST, the system processes the latest options data—7 minutes before the Options market opens in the USA.")
                             Text("• You have 7 minutes to review the picks and take action.")
@@ -191,8 +240,9 @@ struct InstructionsView: View {
                     Divider()
 
                     Section(header: Text("📲 Your Action Window")
-                                .font(.headline)
-                                .foregroundColor(.blue)) {
+                        .font(.headline)
+                        .foregroundColor(.blue))
+                    {
                         VStack(alignment: .leading) {
                             Text("• Use these 7 minutes to:")
                             Text("   • Add the options picks you are interested in to your Robinhood watchlist.")
@@ -207,8 +257,9 @@ struct InstructionsView: View {
                     Divider()
 
                     Section(header: Text("🔄 Ongoing Updates")
-                                .font(.headline)
-                                .foregroundColor(.blue)) {
+                        .font(.headline)
+                        .foregroundColor(.blue))
+                    {
                         VStack(alignment: .leading) {
                             Text("• The app captures a fresh set of options every weekday morning at 6:23 AM PST.")
                             Text("• After the initial update, the app refreshes the percentage for the following 3 hours and 30 minutes.")
@@ -223,8 +274,9 @@ struct InstructionsView: View {
                     Divider()
 
                     Section(header: Text("💡 Stay Ahead")
-                                .font(.headline)
-                                .foregroundColor(.blue)) {
+                        .font(.headline)
+                        .foregroundColor(.blue))
+                    {
                         VStack(alignment: .leading) {
                             Text("• With QuinOptionsAi, you're always 7 minutes ahead of the market, equipped with data-driven insights to make informed decisions.")
                         }
@@ -237,8 +289,9 @@ struct InstructionsView: View {
                     Divider()
 
                     Section(header: Text("📝 Disclosure")
-                                .font(.headline)
-                                .foregroundColor(.blue)) {
+                        .font(.headline)
+                        .foregroundColor(.blue))
+                    {
                         VStack(alignment: .leading) {
                             Text("• Remember, all investments carry risks. The data provided by QuinOptionsAi is for informational purposes only. Always do your own research before making any financial decisions.")
                         }
