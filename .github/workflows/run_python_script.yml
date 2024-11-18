@@ -3,7 +3,7 @@ name: Run Python Script
 on:
   # Runs at 6:10 AM PST, Monday through Friday
   schedule:
-    - cron: '00 13 * * 1-5'
+    - cron: '10 14 * * 1-5'
   workflow_dispatch:
 
 jobs:
@@ -24,19 +24,20 @@ jobs:
           python -m pip install --upgrade pip
           pip install yfinance selenium python-dotenv robin_stocks firebase-admin pyotp
 
-      - name: Install Chrome Version 129
+      - name: Download and Set Up ChromeDriver
         run: |
-          sudo apt-get remove google-chrome-stable -y
-          wget https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_129.0.6668.69-1_amd64.deb
-          sudo dpkg -i google-chrome-stable_129.0.6668.69-1_amd64.deb
-          google-chrome --version
-
-      - name: Use local ChromeDriver 129
-        run: |
-          sudo mv ./chromedriver /usr/local/bin/chromedriver
+          # Download ChromeDriver 131.0.6778.69
+          wget https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.69/linux64/chromedriver-linux64.zip
+          # Unzip the driver
+          unzip chromedriver-linux64.zip -d /usr/local/bin/
+          # Make it executable
           sudo chmod +x /usr/local/bin/chromedriver
-          # Confirm ChromeDriver setup
+          # Verify ChromeDriver version
           /usr/local/bin/chromedriver --version
+
+      - name: Verify Chrome Installation
+        run: |
+          google-chrome --version
 
       - name: Run Python Script
         env:
