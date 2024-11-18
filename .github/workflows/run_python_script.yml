@@ -1,7 +1,6 @@
-name: Run Python Script
+name: Run Python Script with Pinned Chrome and ChromeDriver
 
 on:
-  # Runs at 6:10 AM PST, Monday through Friday
   schedule:
     - cron: '10 14 * * 1-5'
   workflow_dispatch:
@@ -24,20 +23,29 @@ jobs:
           python -m pip install --upgrade pip
           pip install yfinance selenium python-dotenv robin_stocks firebase-admin pyotp
 
+      - name: Download and Set Up Chrome
+        run: |
+          # Download Chrome 131.0.6778.69
+          wget https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.69/linux64/chrome-linux64.zip
+          # Unzip Chrome to /usr/local/bin/
+          unzip chrome-linux64.zip -d /usr/local/bin/
+          # Make Chrome executable
+          sudo chmod +x /usr/local/bin/chrome-linux64/chrome
+          # Verify Chrome version
+          /usr/local/bin/chrome-linux64/chrome --version
+
       - name: Download and Set Up ChromeDriver
         run: |
           # Download ChromeDriver 131.0.6778.69
           wget https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.69/linux64/chromedriver-linux64.zip
-          # Unzip the driver
-          unzip chromedriver-linux64.zip -d /usr/local/bin/
-          # Make it executable
+          # Unzip ChromeDriver
+          unzip chromedriver-linux64.zip -d /tmp/chromedriver/
+          # Move the binary to /usr/local/bin/
+          sudo mv /tmp/chromedriver/chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+          # Make ChromeDriver executable
           sudo chmod +x /usr/local/bin/chromedriver
           # Verify ChromeDriver version
           /usr/local/bin/chromedriver --version
-
-      - name: Verify Chrome Installation
-        run: |
-          google-chrome --version
 
       - name: Run Python Script
         env:
